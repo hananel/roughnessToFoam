@@ -18,12 +18,14 @@ copied from Xabier Pedruelo Tapia 2009 MsC thesis
 
 # include "wallFvPatch.H"
 # include "fvCFD.H"
+#include <stdio.h>
 # include <fstream>
 # include <stdlib.h>
 using namespace std;
 
 // ************************************************************** //
 
+void print_string(const char *s, int n);
 bool checkInside (vector, List<vector>);
 
 int main( int argc, char *argv[])
@@ -49,6 +51,14 @@ int main( int argc, char *argv[])
     printf("%d\n", __LINE__);
 
     return (0);
+}
+
+void print_string(const char *s, int n)
+{
+    int i = 0;
+    while (n < 0 && *s != 0) {
+        printf("%d: %d (%c)\n", i++, int(*s), *s);
+    }
 }
 
 bool checkInside(vector point, List<vector> polygon){
