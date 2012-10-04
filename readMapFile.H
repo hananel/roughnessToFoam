@@ -10,6 +10,7 @@ tmp = tmp + "/";
 cin.getline(file, 100);
 tmp = tmp + file;
 
+// TODO - make the file the first available map file in the case base directory. In the use instructions it should be stated that only one map file should exist, and it will be used
 cout << "using filename " << tmp << endl;
 
 char nam[300];
@@ -49,18 +50,20 @@ char d[512];
 fileName cadena;
 
 while (!inFile.eof()) {
-    printf("****  inside inFile, a = %d, %d\n",a, inFile.tellg());
     if (a < 4) { //We skip the first 4 lines of the map file
         inFile.getline(d, sizeof(d) - 1, '\n');
-        printf("****  d = %s\n",d);
     } else {
         inFile.get(c);
         cadena += c;
-        cout << "cadena: " << cadena << endl;
     }
     a++;
 }
-Info<< "DDDDDD File(" << inFile << ") '" << nam << "' has been read" <<endl;
+
+cout << endl;
+cout << "polygons read: " << endl;
+cout << cadena << endl;
+
+Info<< "File(" << inFile << ") '" << nam << "' has been read" <<endl;
 Info<<endl;
 
 Info<< "Now we need to relate the WAsP point files coordinate to our mesh coordinate system. For that purpose we will introduce some data" <<endl;
@@ -72,14 +75,12 @@ scalar b1 = 0;
 scalar a2 = 0;
 scalar b2 = 1;
 
-// TODO change so that an input here is if i even want to a a relation between the map file and the wasp file coordinate system - normally there won't be a difference
 
 Info<<endl<< "* Introduce the offset between both coordinate system origins (x0, y0) mesh = offset + x0, y0)wasp : (the offset must be in mesh coordinates) " <<endl;
 Info<< "x_value: ";
 cin>>offset_x;
 Info<< "y_value: ";
 cin>>offset_y;
-
 Info<<endl<< "Now introduce the values (x, y) for the point (1, 0) wasp in mesh coordinates" <<endl;
 Info<< "x_value: ";
 cin>>a1;
@@ -104,9 +105,7 @@ Vector <scalar> z0InOut; // was "CsCk"
 bool firstPolygon = true;
 // end - my addition - Hanan Einav Levy 27/09/12
 
-printf("\ncad_size = %d\n", cad_size);
 while (i < cad_size - 3) {
-    printf("In while loop - i = %ld\n", i);
     // getting z0In, z0Out and number of vertex of each polygon
     // was "getting Cs,Ks ..."
     int ni = 0;
@@ -117,9 +116,6 @@ while (i < cad_size - 3) {
         i++;
     }
     scalar z0In_s = atof(z0In); //was "cs_s ..."
-    print_string(z0In, sizeof(z0In));
-    printf("z0In = %s\n",z0In);
-    printf("z0In_s = %f\n",z0In_s);
     i++;
 
     ni = 0;
@@ -130,8 +126,6 @@ while (i < cad_size - 3) {
         i++;
     }
     scalar z0Out_s = atof(z0Out); // was "ks_s ..."
-    printf("z0Out = %s\n",z0Out);
-    printf("z0Out_s = %f\n",z0Out_s);
     i++;
 
     ni = 0;
@@ -143,14 +137,11 @@ while (i < cad_size - 3) {
     }
     scalar nvertex_s = atoi(nvertex);
     List <vector> p_polygon;
-    printf("nvertex = %s\n",nvertex);
-    printf("nvertex_s = %f\n",nvertex_s);
 
     p_polygon.setSize(nvertex_s);
     z0InOut[0] = z0In_s;
     z0InOut[1] = z0Out_s;
     z0InOut[2] = nvertex_s;
-    printf("polygon %ld has z0in = %f z0Out %f number of points %f\n",i,z0InOut[0],z0InOut[1],z0InOut[2]);
 
     i++; //We are in the position of the first
          //char of the first vertex of the polygon and we are getting
@@ -186,7 +177,6 @@ while (i < cad_size - 3) {
         i++;
 
         if (cadena[i] == '/') i = cad_size;
-        printf("polygon point %d is (%f,%f,%f)\n",j,p_polygon[j][0],p_polygon[j][1],p_polygon[j][2]);
 
     }
 
@@ -197,7 +187,6 @@ while (i < cad_size - 3) {
     // end - my adition - Hanan Einav Levy 27/09/12
     
     n_polygons++;
-    printf("\nn_polygons = %d\n",n_polygons);
 }
 
 inFile.close(); //We close the file

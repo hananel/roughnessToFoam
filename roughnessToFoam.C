@@ -25,7 +25,6 @@ using namespace std;
 
 // ************************************************************** //
 
-void print_string(const char *s, int n);
 bool checkInside (vector, List<vector>);
 
 int main( int argc, char *argv[])
@@ -37,28 +36,16 @@ int main( int argc, char *argv[])
 # include "createMesh.H"
 # include "createZ0.H" // was "createCsKs.H"
 
-    printf("%d\n", __LINE__);
 
     const fvPatchList& patches = mesh.boundary();
     scalar startFace = mesh.neighbour().size();
 
-    printf("%d\n", __LINE__);
 # include "readMapFile.H" //was Readmapfile.H
 
-    printf("%d\n", __LINE__);
     Info<< " Writing z0 " <<endl; //writing Z0 boundary file - was "writing Cs and Ks boundary file" - TODO - is it endl or end1? went with the latter
     z0.write(); //was two lines - "Ks.write(); / Cs.write();
-    printf("%d\n", __LINE__);
 
     return (0);
-}
-
-void print_string(const char *s, int n)
-{
-    int i = 0;
-    while (n < 0 && *s != 0) {
-        printf("%d: %d (%c)\n", i++, int(*s), *s);
-    }
 }
 
 bool checkInside(vector point, List<vector> polygon){
