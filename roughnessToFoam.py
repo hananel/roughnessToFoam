@@ -25,8 +25,13 @@ def main(args):
     os.system("cp -r 0/p 0/z0")
     z0Dict = ParsedParameterFile("0/z0")
     z0Dict.header["object"] = "z0"
-    z0Dict["boundaryField"]["terrain_*"]["value"] = "uniform 0"
-    z0Dict["boundaryField"]["terrain_*"]["type"] = "fixedValue"
+    for b in z0Dict["boundaryField"]:
+        print b
+        if type(b) is str:
+            if b.find("terrain")>-1 or b.find("ground")>-1:
+                print "found terrain/ground in z0 at patch " + b
+                z0Dict["boundaryField"][b]["value"]="uniform 0"
+                z0Dict["boundaryField"][b]["type"]="fixedValue"
     z0Dict["dimensions"] = "[ 0 1 0 0 0 0 0]"
     z0Dict.writeFile()
 
@@ -37,18 +42,27 @@ def main(args):
     # 2 - reading modified z0 file - made with roughnessToFoam.C
     z0Dict = ParsedParameterFile("0/z0")
     for b in z0Dict["boundaryField"]:
-        if b.find("terrain")>-1:
-                z0 = z0Dict["boundaryField"][b]["value"]
-                print "z0 taken from %s" % b
+        if type(b) is str:
+            if b.find("terrain")>-1:
+                # TODO - save each different *terrain*'s z0 and place in matching nut *terrain*. at the moment - only one patch with "terrain" in it is expected, and one with "ground". 
+                z0Terrain = z0Dict["boundaryField"][b]["value"]
+                print "taken *terrain* z0 from %s" % b
+            if b.find("ground")>-1:
+                z0Ground = z0Dict["boundaryField"][b]["value"]
+                print "taken *ground* z0 from %s" % b
 
     # 3 - writing z0 into nut file
     nutDict = ParsedParameterFile("0/nut")
-    try:
-        print "terrain_* changed"
-        nutDict["boundaryField"]["terrain_*"]["z0"] = z0
-    except IOError:
-        print "no terrain_* in nut file, changing ground"
-        nutDict["boundaryField"]["ground"]["z0"] = z0
+    for b in nutDict["boundaryField"]:
+        if type(b) is str:
+            for c in nutDict["boundaryField"][b]:
+                if "z0" in c:
+                        if b.find("terrain")>-1:
+                            nutDict["boundaryField"][b]["z0"] = z0Terrain
+                        if b.find("ground")>-1:
+                            nutDict["boundaryField"][b]["z0"] = 0
+                            nutDict["boundaryField"][b]["z0"] = z0Ground
+                        
     nutDict.writeFile()
     os.chdir(cwd)
 
