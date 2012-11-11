@@ -94,11 +94,3 @@ if __name__ == '__main__':
     parser.add_argument('--target',default='./', help='location of directory in which the case is located')
     args = parser.parse_args(sys.argv[1:])
     main(args)
-
-class Chdir:         
-    def __init__( self, newPath ):  
-        self.savedPath = os.getcwd()
-        os.chdir(newPath)
-
-    def __del__( self ):
-        os.chdir( self.savedPath )
