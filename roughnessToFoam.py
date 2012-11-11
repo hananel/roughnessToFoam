@@ -12,12 +12,28 @@ from argparse import ArgumentParser
 from subprocess import call
 import os, sys, glob
 
+def remove_extra_spaces(src):
+    """
+    read src and write a new version to the same file without extra spaces.
+
+    The new version contains only a single space between every item.
+    src line: "a   b   c\n"
+    new src line: "a b c\n"
+    """
+    with open(src) as f:
+        lines = f.readlines()
+    with open(src, 'w+') as f:
+        f.writelines(' '.join(l.split()) + '\n' for l in lines)
+
 def main(args):
     # 0 - reading input
     cwd = os.getcwd()
     os.chdir(args.target)
+    if len(glob.glob("*.map")) > 1:
+        print "error: more then a single map file in the directory, please delete all except one"
+        raise SystemExit
     mapFileName = glob.glob("*.map")[0]
-    
+    remove_extra_spaces(mapFileName)
     from pdb import set_trace
     #set_trace()
     
